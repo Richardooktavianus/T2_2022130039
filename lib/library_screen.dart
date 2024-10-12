@@ -8,7 +8,7 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final libraryProvider = Provider.of<LibraryProvider>(context);
+    Provider.of<LibraryProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(

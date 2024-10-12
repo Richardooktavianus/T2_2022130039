@@ -1,10 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:t2_202210039/provider/setting_provider.dart';
 import 'package:t2_202210039/provider/user_provider.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final profileProvider = Provider.of<UserProvider>(context, listen: false);
+    _nameController.text = profileProvider.name;
+    _emailController.text = profileProvider.email;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +31,6 @@ class EditProfileScreen extends StatelessWidget {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     Color textColor = settingsProvider.isDarkMode ? Colors.white : Colors.black;
-    Color backgroundColor =
-        settingsProvider.isDarkMode ? Colors.black : Colors.white;
-    Color buttonColor =
-        settingsProvider.isDarkMode ? Colors.white : Colors.blue;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,7 +38,6 @@ class EditProfileScreen extends StatelessWidget {
           'Edit Profile',
           style: TextStyle(color: textColor),
         ),
-        backgroundColor: backgroundColor = const Color(0xFF1DB954),
       ),
       backgroundColor:
           settingsProvider.isDarkMode ? Colors.black : Colors.white,
@@ -32,9 +46,13 @@ class EditProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () {
-                // Logic to pick and update profile image
-                profileProvider.pickProfileImage();
+              onTap: () async {
+                final pickedFile = await ImagePicker().pickImage(
+                  source: ImageSource.gallery,
+                );
+                if (pickedFile != null) {
+                  profileProvider.pickProfileImage(File(pickedFile.path));
+                }
               },
               child: CircleAvatar(
                 radius: 50,
@@ -46,27 +64,27 @@ class EditProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              initialValue: profileProvider.name,
+              controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Name',
                 labelStyle: TextStyle(color: textColor),
               ),
               style: TextStyle(color: textColor),
-              onChanged: (value) => profileProvider.updateName(value),
             ),
             const SizedBox(height: 20),
             TextFormField(
-              initialValue: profileProvider.email,
+              controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle: TextStyle(color: textColor),
               ),
               style: TextStyle(color: textColor),
-              onChanged: (value) => profileProvider.updateEmail(value),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                profileProvider.updateName(_nameController.text);
+                profileProvider.updateEmail(_emailController.text);
                 profileProvider.saveProfile();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -77,7 +95,6 @@ class EditProfileScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: backgroundColor = const Color(0xFF1DB954),
                   foregroundColor: settingsProvider.isDarkMode
                       ? Colors.white
                       : Colors.black),
@@ -91,3 +108,4 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 }
+

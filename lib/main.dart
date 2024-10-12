@@ -16,7 +16,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => LibraryProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Spotify Clone',
       theme: SpotifyTheme.themeData,
-      home: SpotifyCloneApp(),
+      home: const SpotifyCloneApp(),
     );
   }
 }
@@ -38,6 +38,7 @@ class SpotifyCloneApp extends StatefulWidget {
   const SpotifyCloneApp({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SpotifyCloneAppState createState() => _SpotifyCloneAppState();
 }
 
@@ -61,6 +62,9 @@ class _SpotifyCloneAppState extends State<SpotifyCloneApp> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: SpotifyTheme.darkBackground,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

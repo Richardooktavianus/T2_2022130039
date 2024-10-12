@@ -23,7 +23,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> pickProfileImage() async {
+  Future<void> pickProfileImage(File file) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
